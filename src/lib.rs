@@ -9,10 +9,12 @@
 mod mario;
 mod falco;
 mod custom;
+mod seph;
 
-#[skyline::main(name = "smashline_test")]
+#[skyline::main(name = "compiled_build")]
 pub fn main() {
-    mario::install();
-    falco::install();
-    custom::install();
+    //mario::install();
+    //falco::install();
+    //custom::install();
+    //seph::install();
 }
