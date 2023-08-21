@@ -83,7 +83,6 @@ pub fn global_fighter_frame(fighter : &mut L2CFighterCommon) {
                 entry_id
             );
         }
-
     }
 }
 

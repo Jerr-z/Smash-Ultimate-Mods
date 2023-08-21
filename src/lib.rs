@@ -16,5 +16,5 @@ pub fn main() {
     //mario::install();
     //falco::install();
     //custom::install();
-    //seph::install();
+    seph::install();
 }
