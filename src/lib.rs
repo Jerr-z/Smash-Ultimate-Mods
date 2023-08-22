@@ -8,13 +8,15 @@
 
 mod mario;
 mod falco;
-mod custom;
+mod statuslogger;
 mod seph;
+mod chrom;
 
 #[skyline::main(name = "compiled_build")]
 pub fn main() {
     //mario::install();
     //falco::install();
-    //custom::install();
-    seph::install();
+    //statuslogger::install();
+    //seph::install();
+    chrom::install();
 }
