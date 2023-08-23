@@ -61,15 +61,15 @@ unsafe fn effect_specialairhi2(agent: &mut L2CAgentBase) {
     frame(agent.lua_state_agent, 4.0);
     if macros::is_excute(agent) {
         macros::AFTER_IMAGE4_ON_arg29(agent, Hash40::new("tex_lucina_sword1"), Hash40::new("tex_lucina_sword2"), 6, Hash40::new("sword1"), 0.0, 0.0, 0.5, Hash40::new("sword1"), -0.0, -0.0, 12.6, true, Hash40::new("null"), Hash40::new("haver"), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, *EFFECT_AXIS_X, 0, *TRAIL_BLEND_ALPHA, 101, *TRAIL_CULL_NONE, 1.4, 0.2);
-        macros::EFFECT_FOLLOW(agent, Hash40::new("lucina_dolphin_jump"), Hash40::new("top"), -0.0, 0, -5, 0, 0, 0, 1, true);
+        macros::EFFECT_FOLLOW(agent, Hash40::new("chrom_tenku_jump"), Hash40::new("top"), -0.0, 0, -5, 0, 0, 0, 1, true);
     }
     frame(agent.lua_state_agent, 5.0);
     if macros::is_excute(agent) {
-        macros::EFFECT_DETACH_KIND(agent, Hash40::new("lucina_dolphin_jump"), -1);
+        macros::EFFECT_DETACH_KIND(agent, Hash40::new("chrom_tenku_jump"), -1);
         macros::EFFECT_DETACH_KIND(agent, Hash40::new("lucina_dolphin_swing"), -1);
         macros::EFFECT_FOLLOW(agent, Hash40::new("lucina_dolphin_shadow"), Hash40::new("top"), -0.0, 0, 0, 0, 0, 0, 1, true);
         EffectModule::enable_sync_init_pos_last(agent.module_accessor);
-        macros::EFFECT_FOLLOW(agent, Hash40::new("lucina_sword_blue"), Hash40::new("haver"), -0.0, 0, 0, 0, 0, 0, 1, true);
+        macros::EFFECT_FOLLOW(agent, Hash40::new("chrom_sword"), Hash40::new("haver"), -0.0, 0, 0, 0, 0, 0, 1, true);
     }
     frame(agent.lua_state_agent, 7.0);
     if macros::is_excute(agent) {
@@ -81,15 +81,20 @@ unsafe fn effect_specialairhi2(agent: &mut L2CAgentBase) {
     }
     frame(agent.lua_state_agent, 13.0);
     if macros::is_excute(agent) {
-        macros::EFFECT_OFF_KIND(agent, Hash40::new("lucina_sword_blue"), false, true);
+        macros::EFFECT_OFF_KIND(agent, Hash40::new("chrom_sword"), false, true);
     }
 }
 
 
 
-/* decompiled code for status script, cleanup later */
+#[status_script(agent = "chrom", status = FIGHTER_ROY_STATUS_KIND_SPECIAL_HI_2, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
+unsafe fn chrom_specialhi2_end(fighter: &mut L2CFighterCommon) -> L2CValue {
+    let entry_id = WorkModule::get_int(fighter.module_accessor, *FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
+    SPECIAL_AIR_HI_USED[entry_id] = false;
+    original!(fighter)
+}
 
-// main
+
 #[status_script(agent = "chrom", status = FIGHTER_ROY_STATUS_KIND_SPECIAL_HI_2, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_MAIN)]
 unsafe fn chrom_specialhi2_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     WorkModule::set_float(fighter.module_accessor, 1.0, *FIGHTER_ROY_STATUS_SPECIAL_HI_WORK_FLOAT_JUMP_MUL_2);
@@ -240,17 +245,19 @@ unsafe fn LAB_7100021040(fighter: &mut L2CFighterCommon) -> L2CValue {
             return 0.into();
         }
         
-        if fighter.global_table[0x16].get_i32() == *SITUATION_KIND_GROUND {
+        if fighter.global_table[0x16].get_i32() == *SITUATION_KIND_GROUND
+        && !SPECIAL_AIR_HI_USED[entry_id] {
             fighter.change_status(FIGHTER_ROY_STATUS_KIND_SPECIAL_HI_4.into(), false.into());
             return 0.into();
         }
     }
 
     if fighter.global_table[0x16].get_i32() == *SITUATION_KIND_GROUND {
-    
+        let entry_id = WorkModule::get_int(fighter.module_accessor, *FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
+        
         if WorkModule::is_flag(fighter.module_accessor, *FIGHTER_ROY_STATUS_SPECIAL_HI_FLAG_TRANS_JUMP) {
             
-            if MotionModule::trans_move_speed(fighter.module_accessor).y < 0.0 {
+            if MotionModule::trans_move_speed(fighter.module_accessor).y < 0.0 && !SPECIAL_AIR_HI_USED[entry_id] {
                 fighter.change_status(FIGHTER_ROY_STATUS_KIND_SPECIAL_HI_4.into(), false.into());
                 return 0.into();
             }
@@ -268,5 +275,8 @@ pub fn install() {
         effect_specialairhi2
     );
 
-    install_status_scripts!(chrom_specialhi2_main);
+    install_status_scripts!(
+        chrom_specialhi2_main,
+        chrom_specialhi2_end
+    );
 }
